@@ -1,0 +1,34 @@
+version: "3.3"
+services:
+  postgres_account:
+    image: debezium/example-postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+
+  kafka:
+    image: debezium/kafka:1.1
+    ports:
+      - 9092:9092
+    links:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+
+  kafdrop:
+    container_name: kafdrop_container
+    image: obsidiandynamics/kafdrop:3.24.0
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9092
+    ports:
+      - 9000:9000
+    depends_on:
+      - kafka
+  zookeeper:
+    image: debezium/zookeeper:1.1
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
